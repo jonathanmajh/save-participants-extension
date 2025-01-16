@@ -2,53 +2,32 @@
 // controller in the page
 
 async function sp_microsoft_teams_get_call_handler() {
-    let call = null;
-    let peopleService = null;
-
-    try {
-        let stage = angular.element(
-            document.getElementsByTagName('calling-stage')[0]
-        );
-        let controller = stage.controller();
-        call = controller.call;
-        peopleService = controller.$scope.app.peopleService;
-    } catch {
-        call = null;
-    }
-
-    // Get participants
+    const roster = document.querySelectorAll('[data-cid="roster-participant"]');
     let participants = {};
-
-    if (call != null) {
-        // Find myself first
-        let myself = call.currentUserSkypeIdentity;
-        let mymri = call.callerMri;
-        participants[mymri] = {
-            'name': myself.displayName,
-            'id': mymri
-        };
-
-        // And then the others
-        for (i = 0; i < call.participants.length; i++) {
-            let user = call.participants[i];
-            participants[user.mri] = {
-                'id': user.mri,
-                'name': user.displayName
-            };
-        }
-
-        // The others have the MRI as id, so we can use it to
-        // get the complete profiles
-        let mris = Object.keys(participants);
-        let profiles = await peopleService.getAllPeopleProfile(mris);
-
-        // Add the profiles to the participants
-        for (i = 0; i < profiles.length; i++) {
-            if (participants.hasOwnProperty(profiles[i].mri)) {
-                participants[profiles[i].mri].profile = profiles[i];
+    for (let i = 0; i < roster.length; i++) {
+        let details = roster[i].dataset.tid.split('-')
+        console.log(details)
+        if (details[0] == 'participantsInCall') {
+            participants[i] = {
+                'id': i,
+                'name': details[1]
             }
         }
     }
+    console.log(participants);
+
+    // // The others have the MRI as id, so we can use it to
+    // // get the complete profiles
+    // let mris = Object.keys(participants);
+    // let profiles = await peopleService.getAllPeopleProfile(mris);
+
+    // // Add the profiles to the participants
+    // for (i = 0; i < profiles.length; i++) {
+    //     if (participants.hasOwnProperty(profiles[i].mri)) {
+    //         participants[profiles[i].mri].profile = profiles[i];
+    //     }
+    // }
+
 
     let event = new CustomEvent('sp_microsoft_teams_get_call', {
         detail: {
@@ -58,5 +37,16 @@ async function sp_microsoft_teams_get_call_handler() {
 
     document.dispatchEvent(event);
 };
-
+console.log('get call script loaded');
 sp_microsoft_teams_get_call_handler();
+
+// data-tid="calling-right-side-panel"
+// data-tid="calling-roster-wrapper"
+// data-cid="calling-roster"
+//data-cid="roster-participant"
+// dataset: {
+//     "isFocusable": "false",
+//     "cid": "roster-participant",
+//     "tag": "refactored",
+//     "tid": "participantsInCall-Jonathan Ma"
+// }

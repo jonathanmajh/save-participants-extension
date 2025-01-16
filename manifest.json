@@ -1,13 +1,21 @@
   {
-    "name": "Save Participants (Google Meet & MS Teams)",
-    "version": "2.7",
-    "description": "This extensions allows to download the list of participants in a meeting in Microsoft Teams or Google Meet as a text file",
-    "permissions": ["downloads", "activeTab", "declarativeContent", "storage"],
+    "name": "Save Teams Meeting Participants",
+    "version": "3.0",
+    "description": "This extensions allows to download the list of participants in a meeting in Microsoft Teams as a text file",
+    "permissions": [
+      "tabs",
+      "activeTab",
+      "scripting",
+      "downloads",
+      "storage"
+    ],
+    "host_permissions": [
+      "https://teams.microsoft.com/*"
+    ],
     "background": {
-      "scripts": ["background.js"],
-      "persistent": false
+      "service_worker": "background.js"
     },
-    "page_action": {
+    "action": {
       "default_popup": "popup.html",
       "default_icon": {
         "16": "images/particip_16.png",
@@ -16,6 +24,15 @@
         "128": "images/particip_128.png"
       }
     },
-    "manifest_version": 2,
-    "web_accessible_resources": [ "get-call.js" ]
+    "manifest_version": 3,
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "get-call.js"
+        ],
+        "matches": [
+          "https://teams.microsoft.com/*"
+        ]
+      }
+    ]
   }

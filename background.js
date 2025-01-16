@@ -1,28 +1,31 @@
-chrome.runtime.onInstalled.addListener(function() {
-    chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-        // Rule for matching at teams.microsoft.com
-        chrome.declarativeContent.onPageChanged.addRules([{
-            conditions: [new chrome.declarativeContent.PageStateMatcher({
-                pageUrl: {
-                    hostEquals: 'teams.microsoft.com'
-                },
-            })],
-            actions: [
-                new chrome.declarativeContent.ShowPageAction(),
-            ]
-        }]);
+chrome.runtime.onInstalled.addListener(function () {
+    // Add a listener for tab updates
+    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+        if (changeInfo.status === "complete" && tab.url) {
+            const url = new URL(tab.url);
 
-        // Rule for matching at meet.google.com
-        chrome.declarativeContent.onPageChanged.addRules([{
-            conditions: [new chrome.declarativeContent.PageStateMatcher({
-                pageUrl: {
-                    hostEquals: 'meet.google.com'
-                },
-            })],
-            actions: [new chrome.declarativeContent.ShowPageAction()]
-        }]);
+            // Check for specific hostnames
+            if (url.host === "teams.microsoft.com") {
+                // Show the action icon
+                chrome.action.enable(tabId);
+            } else {
+                // Hide the action icon
+                chrome.action.disable(tabId);
+            }
+        }
     });
 });
+
+function downloadBlobAsFile(blob, filename) {
+    const reader = new FileReader();
+    reader.onload = function () {
+        chrome.downloads.download({
+            url: reader.result,
+            filename: filename
+        });
+    };
+    reader.readAsDataURL(blob); // Convert Blob to Data URL
+}
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
@@ -47,12 +50,7 @@ chrome.runtime.onMessage.addListener(
             var blob = new Blob([msg], {
                 type: "text/plain"
             });
-            var url = URL.createObjectURL(blob);
-            chrome.downloads.download({
-                url: url,
-                filename: filename
-            });
-
+            downloadBlobAsFile(blob, filename);
             sendResponse({
                 status: 'completed'
             });
