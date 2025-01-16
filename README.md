@@ -6,9 +6,9 @@ download the list of users participating in a meeting on
 
 Based on the extension by [robol](https://github.com/robol/save-participants-extension)
 
-~~If you just wish to install the extension, you can ~~
-~~[get it](https://chrome.google.com/webstore/detail/save-participants/amajpgnakbemacnkmnjbkoacbaephjfd) ~~
-~~from the Chrome Webstore. ~~
+<strike>If you just wish to install the extension, you can
+[get it](https://chrome.google.com/webstore/detail/save-participants/amajpgnakbemacnkmnjbkoacbaephjfd)
+from the Chrome Webstore.</strike>
 
 ## Contribute
 
